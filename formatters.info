@@ -1,0 +1,6 @@
+name = Formatters
+description = DCparis 13 Sprint Formatters.
+core = 7.x
+
+dependencies[] = entity
+configure = admin/structure/formatters

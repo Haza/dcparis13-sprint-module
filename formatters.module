@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * @file
+ * Exposes global functionality for creating formatters styles.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function formatters_menu() {
+  $items = array();
+  
+  $items['admin/config/formatters'] = array(
+    'title' => 'Formatters',
+    'description' => '',
+    'page callback' => 'formatters_admin_list',
+    'access arguments' => array('administer formatters'),
+    'file' => 'formatters.admin.inc',
+  );
+  $items['admin/config/formatters/list'] = array(
+    'title' => 'List',
+    'description' => '',
+    'page callback' => 'formatters_admin_list',
+    'access arguments' => array('administer formatters'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 1,
+    'file' => 'formatters.admin.inc',
+  );
+  $items['admin/config/formatters/add'] = array(
+    'title' => 'Add formatter',
+    'description' => 'Add a new formatter.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('formatters_add_form'),
+    'access arguments' => array('administer formatters'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
+    'file' => 'formatters.admin.inc',
+  );
+  
+  return $items;
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function formatters_entity_info() {  
+  $info['formatters'] = array(
+    'label' => t('Formatters TODO'),
+    'controller class' => 'EntityAPIController',
+    'entity class' => 'Entity',
+    'base table' => 'formatters',
+    'module' => 'formatters',
+    'exportable' => TRUE,
+    'entity keys' => array(
+      'id' => 'ffid',
+      'name' => 'machine_name',
+    ),
+  );
+  
+  return $info;
+}
+
+/**
+ * Implements hook_formatters_effect_info().
+ *
+ * @return
+ *   An array of effects keyed by the effect machine name
+ *   Effects should contains : 
+ *     - "label" (required): The effect human name
+ *     - "help" (optional): A help text
+ *     - "effect callback" (required): A function name that should be triggered
+ *       and applied
+ *     - "options callback" (optional): 
+ *     - "form callback" (optional): the form used to displayed the options.
+ */
+function formatters_formatters_effect_info() {
+  $effects = array(
+    'trim' => array(
+      'label' => t('Trim'),
+      'help' => t('Trim (TODO: complete me).'),
+      'effect callback' => 'trim_effect',
+      'options callback' => 'trim_options',
+      'form callback' => 'trim_form',
+    ),
+  );
+}
+
+function trim_effect() {
+    // TODO
+}
+
+function trim_options() {
+    // TODO
+}
+
+function trim_form() {
+    // TODO
+}
+
+/**
+ * Implements hook_formatters_default_styles().
+ *
+ * @return
+ *   An array of formatters styles, keyed by the style name.
+ * 
+ * Here for exemple purpose.
+ */
+function formatters_formatters_default_styles() {
+  $styles = array();
+
+  $styles['trim_to_50'] = array(
+    'effects' => array(
+      array(
+        'name' => 'trim',
+        'data' => array('lenght' => 50),
+      ),
+    )
+  ); 
+  $styles['trim_to_100'] = array(
+    'effects' => array(
+      array(
+        'name' => 'trim',
+        'data' => array('lenght' => 100),
+      ),
+    )
+  );
+  
+  return $styles;
+}

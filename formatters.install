@@ -1,0 +1,44 @@
+<?php
+/**
+ * Implements hook_schema().
+ */
+function formatters_schema() {
+  $schema['formatters'] = array(
+    'description' => 'The base table for field formatters.',
+    'fields' => array(
+      'ffid' => array(
+        'description' => 'The primary identifier for a field formatter.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'machine_name' => array(
+        'description' => 'The formatter machine name.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+
+      'field_types' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of name value pairs that are related to the user. Any form values posted during user edit are stored and are loaded into the $user object during user_load(). Use of this field is discouraged and it will likely disappear in a future version of Drupal.',
+      ),
+      'components' => array(
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of name value pairs that are related to the user. Any form values posted during user edit are stored and are loaded into the $user object during user_load(). Use of this field is discouraged and it will likely disappear in a future version of Drupal.',
+      )
+     ),
+     'indexes' => array(
+      'machine_name'        => array('machine_name')
+    ),
+    'primary key' => array('ffid')
+    );
+    return $schema;
+    }
