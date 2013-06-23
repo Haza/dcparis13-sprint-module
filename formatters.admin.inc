@@ -7,9 +7,9 @@
 function formatters_admin_list() {
   $page = array();
 
-  $styles = formatters_get_list();
+  $formatters = formatters_get_list();
   $page['formatters_admin_list'] = array(
-    '#markup' => theme('formatters_admin_list', array('styles' => $styles)),
+    '#markup' => theme('formatters_admin_list', array('formatters' => $formatters)),
     '#attached' => array(
       'css' => array(drupal_get_path('module', 'formatters') . '/formatters.admin.css' => array()),
     ),
@@ -72,13 +72,13 @@ function formatters_name_validate($element, $form_state) {
  * @ingroup themeable
  */
 function theme_formatters_admin_list($variables) {
-  $styles = $variables['styles'];
+  $formatters = $variables['formatters'];
 
   $header = array(t('Formatter name'), t('Settings'), array('data' => t('Operations'), 'colspan' => 3));
   $rows = array();
-  foreach ($styles as $style) {
+  foreach ($formatters as $formatter) {
     $row = array();
-    $row[] = l($style['name'], 'admin/config/formatters/edit/' . $style['name']);
+    $row[] = l($formatter['name'], 'admin/config/formatters/edit/' . $formatter['name']);
     $link_attributes = array(
       'attributes' => array(
         'class' => array('image-style-link'),
@@ -96,18 +96,18 @@ function theme_formatters_admin_list($variables) {
     }
     else {*/
       $row[] = t('Default');
-      $row[] = l(t('edit'), 'admin/config/formatters/edit/' . $style['name'], $link_attributes);
-      $row[] = '';
+      $row[] = l(t('edit'), 'admin/config/formatters/edit/' . $formatter['name'], $link_attributes);
+      //$row[] = '';
     /* } */
     $rows[] = $row;
   }
 
   if (empty($rows)) {
     $rows[] = array(array(
-      'colspan' => 4,
+      'colspan' => 3,
       'data' => t('There are currently no styles. <a href="!url">Add a new one</a>.', array('!url' => url('admin/config/formatters/add'))),
     ));
   }
 
   return theme('table', array('header' => $header, 'rows' => $rows));
-
+}
