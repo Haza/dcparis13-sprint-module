@@ -7,7 +7,7 @@
 
 /**
  * @addtogroup hooks
- * @{
+ * 
  */
 
 /**

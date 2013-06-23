@@ -79,11 +79,7 @@ function theme_formatters_admin_list($variables) {
   foreach ($formatters as $formatter) {
     $row = array();
     $row[] = l($formatter['name'], 'admin/config/formatters/edit/' . $formatter['name']);
-    $link_attributes = array(
-      'attributes' => array(
-        'class' => array('image-style-link'),
-      ),
-    );
+
     /*if ($style['storage'] == IMAGE_STORAGE_NORMAL) {
       $row[] = t('Custom');
       $row[] = l(t('edit'), 'admin/config/media/image-styles/edit/' . $style['name'], $link_attributes);
@@ -96,7 +92,7 @@ function theme_formatters_admin_list($variables) {
     }
     else {*/
       $row[] = t('Default');
-      $row[] = l(t('edit'), 'admin/config/formatters/edit/' . $formatter['name'], $link_attributes);
+      $row[] = l(t('edit'), 'admin/config/formatters/edit/' . $formatter['name']);
       //$row[] = '';
     /* } */
     $rows[] = $row;
