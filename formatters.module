@@ -98,15 +98,80 @@ function trim_form() {
     // TODO
 }
 
+
+/**
+ * Gets an array of all formatters styles and their settings.
+ *
+ * @return
+ *   An array of formatters keyed by the formatter ID (ffid).
+ * @see formatters_load()
+ */
+function formatters_get_list() {
+  $formatters = &drupal_static(__FUNCTION__);
+
+  // Grab from cache or build the array.
+  if (!isset($formatters)) {
+    if ($cache = cache_get('formatters_styles', 'cache')) {
+      $formatters = $cache->data;
+    }
+    else {
+      $formatters = array();
+
+      // Select the module-defined styles.
+      foreach (module_implements('formatters_default_styles') as $module) {
+        $module_styles = module_invoke($module, 'formatters_default_styles');
+        foreach ($module_styles as $style_name => $style) {
+          $style['name'] = $style_name;
+          $style['module'] = $module;
+          // $style['storage'] = IMAGE_STORAGE_DEFAULT;
+          foreach ($style['effects'] as $key => $effect) {
+            $definition = formatters_effect_definition_load($effect['name']); // @todo
+            $effect = array_merge($definition, $effect);
+            $style['effects'][$key] = $effect;
+          }
+          $formatters[$style_name] = $style;
+        }
+      }
+
+      // Select all the user-defined styles.
+      $user_styles = db_select('formatters', NULL, array('fetch' => PDO::FETCH_ASSOC))
+        ->fields('formatters')
+        ->orderBy('machine_name')
+        ->execute()
+        ->fetchAllAssoc('machine_name', PDO::FETCH_ASSOC);
+
+      // Allow the user styles to override the module styles.
+      foreach ($user_styles as $style_name => $style) {
+        $style['module'] = NULL;
+        // $style['storage'] = IMAGE_STORAGE_NORMAL;
+        $style['effects'] = formatters_components($style); //@todo
+        if (isset($styles[$style_name]['module'])) {
+          $style['module'] = $styles[$style_name]['module'];
+          // $style['storage'] = IMAGE_STORAGE_OVERRIDE;
+        }
+        $styles[$style_name] = $style;
+      }
+
+      drupal_alter('formatters_styles', $styles);
+      cache_set('formatters_styles', $styles);
+    }
+  }
+
+  return $formatters;
+}
+
+
 /**
  * Implements hook_formatters_default_styles().
  *
  * @return
  *   An array of formatters styles, keyed by the style name.
  * 
- * Here for exemple purpose.
+ * Here for example purpose.
  */
-function formatters_formatters_default_styles() {
+function formatters_f
+
+ormatters_default_styles() {
   $styles = array();
 
   $styles['trim_to_50'] = array(
@@ -127,4 +192,42 @@ function formatters_formatters_default_styles() {
   );
   
   return $styles;
+}
+
+
+/**
+ * Returns a set of formatter effects.
+ *
+ * These formatters are exposed by modules implementing
+ * hook_formatters_effect_info().
+ *
+ * @return
+ *   An array of formatters effects to be used.
+ */
+function formatters_effect_definitions() {
+
+
+  $effects = &drupal_static(__FUNCTION__);
+
+  if (!isset($effects)) {
+    if ($cache = cache_get("image_effects")) {
+      $effects = $cache->data;
+    }
+    else {
+      $effects = array();
+      foreach (module_implements('formatters_effect_info') as $module) {
+        foreach (module_invoke($module, 'formatters_effect_info') as $name => $effect) {
+          // Ensure the current toolkit supports the effect.
+          $effect['module'] = $module;
+          $effect['name'] = $name;
+          // TODO: To be completed. (see keys from formatters_formatters_effect_info()
+          $effects[$name] = $effect;
+        }
+      }
+      drupal_alter('image_effect_info', $effects);
+      cache_set("image_effects", $effects);
+    }
+  }
+
+  return $effects;
 }
